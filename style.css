@@ -1,0 +1,18 @@
+@import url("styles/chart.css");
+
+:root {
+    --fonte-principal: 'Poppins', sans-serif;
+    --cor-fundo: #545B77;
+    --cor-input: #5C8984;
+    --cor-fonte-claro: #ECF8F9;
+    --cor-fonte-escuro: #03001C;
+    --cor-botao: #30A2FF;
+    --cor-negativo: #DB005B;
+    --cor-positivo: #A0D8B3;
+}
+
+body {
+    background: var(--cor-fundo);
+    min-height: 100vh;
+    font-family: var(--fonte-principal);
+}

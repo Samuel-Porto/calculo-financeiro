@@ -1,0 +1,127 @@
+.chart_container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    align-items: center;
+    margin: .5rem .5rem;
+}
+
+.chart, .inputs {
+    margin: 2rem;
+    width: 50%;
+}
+
+.sobra {
+    color: var(--cor-fonte-claro);
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.input_campo {
+    display: grid;
+    grid-template-areas:
+    "nome deletar"
+    "escrita cor";
+    grid-template-rows: 32px 32px;
+    grid-template-columns: 50% 32px;
+    margin-bottom: 16px;
+}
+
+.input_etiqueta {
+    font-size: 24px;
+    color: var(--cor-fonte-claro);
+    grid-area: nome;
+}
+
+.deletar-campo {
+    grid-area: deletar;
+    border-radius: 4px 4px 0 0;
+    border: none;
+}
+
+.campo_valores {
+    padding: .25rem .5rem;
+    font-family: var(--fonte-principal);
+    border: none;
+    grid-area: escrita;
+    border-radius: .25rem 0 0 .25rem;
+    background: var(--cor-input);
+    color: var(--cor-fonte-escuro);
+}
+.campo_valores:focus {
+    outline: none;
+}
+
+.input_cor {
+    border: none;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    grid-area: cor;
+}
+
+.botao_adicionar-campo, .botao_criar-campo {
+    width: 32px;
+    height: 32px;
+    border: none;
+    padding: 0;
+    border-radius: .25rem;
+    background: var(--cor-input);
+}
+
+.novo-campo_nome {
+    display: none;
+    grid-template-areas:
+    "titulo titulo"
+    "input botao";
+    grid-template-rows: 32px 32px;
+    grid-template-columns: 50% 32px;
+}
+
+.adicionar-campo_titulo {
+    color: var(--cor-fonte-claro);
+    font-size: 24px;
+    grid-area: titulo;
+}
+
+.adicionar-campo {
+    padding: .25rem .5rem;
+    font-family: var(--fonte-principal);
+    border: none;
+    grid-area: escrita;
+    border-radius: .25rem 0 0 .25rem;
+    background: var(--cor-input);
+    color: var(--cor-fonte-escuro);
+    grid-area: input;
+}
+.adicionar-campo:focus {
+    outline: none;
+}
+
+.botao_criar-campo {
+    grid-area: botao;
+    width: 32px;
+    height: 32px;
+    background: var(--cor-botao);
+}
+
+@media screen and (orientation: portrait) {
+    .chart_container {
+        display: block;
+    }
+
+    .chart, .inputs {
+        margin: 2rem 0;
+        width: 100%;
+    }
+
+    .chart {
+        width: 100%;
+    }
+    .input_campo {
+        grid-template-columns: calc(100vw - 48px) 32px;
+        text-align: center;
+    }
+}
