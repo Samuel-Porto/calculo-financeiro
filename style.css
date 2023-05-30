@@ -2,13 +2,14 @@
 
 :root {
     --fonte-principal: 'Poppins', sans-serif;
-    --cor-fundo: #545B77;
-    --cor-input: #5C8984;
-    --cor-fonte-claro: #ECF8F9;
+    --cor-fundo: #27374D;
+    --cor-input: #526D82;
+    --cor-fonte-claro: #DDE6ED;
     --cor-fonte-escuro: #03001C;
-    --cor-botao: #30A2FF;
+    --cor-botao: #4F4557;
     --cor-negativo: #DB005B;
     --cor-positivo: #A0D8B3;
+    --cor-input-bruto: #9DB2BF;
 }
 
 body {
