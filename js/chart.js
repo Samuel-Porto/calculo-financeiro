@@ -1,111 +1,61 @@
-import { formataNumero } from "./formata-numero.js";
+const valorBruto = document.querySelector("[data-bruto]");
+const sobra = document.querySelector("[data-sobra]")
+const chartCanvas = document.querySelector(".chart_canvas");
 
-const sobraCampo = document.querySelector("[data-sobra]");
-const inputBruto = document.querySelector("[data-bruto]");
-const inputCorSobra = document.querySelector("[data-cor-sobra]");
-const inputCampo = document.querySelector("[data-input-personalizados]");
-const inputNovoCampo = document.querySelector("[data-novo-campo]");
-const botaoCriarCampo = document.querySelector("[data-criar-campo]");
-const inputAdicionarCampo = document.querySelector("#input_adicionar-campo");
-const botaoAdicionarCampo = document.querySelector("#adicionar-campo");
+var etiquetas;
+var valores;
+var cores;
+var etiquetasLista;
+var valoresLista;
+var coresLista;
 
-var chart = new Chart("chart_dinheiro-porcentagem");
+var chart = new Chart(chartCanvas)
 
-var botoesDeletarCampo;
-var inputEtiquetas;
-var porcentagens;
-var inputValores;
-var inputCores;
+export function atualizaChart() {
+    let soma = 0;
 
-let sobra;
+    etiquetas = document.querySelectorAll("[data-etiquetas]");
+    valores = document.querySelectorAll("[data-valores]");
+    cores = document.querySelectorAll("[data-jscolor]");
 
-atualizaElementos();
-atualizaChart();
+    etiquetasLista = [];
+    valoresLista = [];
+    coresLista = [];
 
-botaoAdicionarCampo.addEventListener("click", () => {
-    botaoAdicionarCampo.style.display = "none";
-    inputNovoCampo.style.display = "grid";
-});
-inputBruto.addEventListener("blur", () => {
-    inputBruto.value = formataNumero(inputBruto);
-    atualizaSobra();
-    atualizaPorcentagem();
-});
-inputCorSobra.addEventListener("change", () => {atualizaChart()});
-botaoCriarCampo.addEventListener("click", () => {criarCampo()});
-
-function atualizaElementos() {
-    botoesDeletarCampo = document.querySelectorAll("[data-deletar-campo]");
-    inputEtiquetas = document.querySelectorAll("[data-etiquetas]");
-    porcentagens = document.querySelectorAll("[data-porcentagem]");
-    inputValores = document.querySelectorAll("[data-valores]");
-    inputCores = document.querySelectorAll("[data-cores]");
-
-    inputCores.forEach(cor => {
-        cor.addEventListener("change", () => {atualizaChart()});
-    });
-    inputValores.forEach(valor => {
-        valor.addEventListener("click", () => {valor.value = ""});
-        valor.addEventListener("blur", () => {
-            valor.value = formataNumero(valor);
-            atualizaChart();
-            atualizaSobra();
-            atualizaPorcentagem();
-        });
+    etiquetas.forEach(etiqueta => {etiquetasLista.push(etiqueta.innerHTML);});
+    cores.forEach(cor => {coresLista.push(cor.value);});
+    valores.forEach(valor => {
+        valoresLista.push(valor.value);
+        soma += Number(valor.value);
     });
 
-    botoesDeletarCampo.forEach(botao => {
-        botao.addEventListener("click", () => {deletarCampo(botao)})
-    })
-
-    atualizaSobra();
-    atualizaChart();
-}
-
-function atualizaPorcentagem() {
-    porcentagens.forEach(porcentagem => {
-        const valorCampo = porcentagem.parentNode.querySelector(".campo_valores").value;
-        let valorPorcentagem = valorCampo * 100 / inputBruto.value;
-        porcentagem.innerHTML = `${valorPorcentagem.toFixed(1)}%`;
-    });
-}
-
-function atualizaChart() {
-    var chartEtiquetas = [];
-    var chartValores = [];
-    var chartCores = [];
-
-    if (sobra >= 0) {
-        chartEtiquetas.push("sobra");
-        chartValores.push(sobra);
-        chartCores.push(inputCorSobra.value);
+    if (soma < valorBruto.value) {
+        etiquetasLista.push("Sobra");
+        valoresLista.push(valorBruto.value - soma);
+        sobra.style.color = "var(--cor-positivo)";
+    } else if (soma > valorBruto.value) {
+        sobra.style.color = "var(--cor-negativo)";
     }
 
-    inputEtiquetas.forEach(etiqueta => {
-        chartEtiquetas.push(etiqueta.innerHTML);
-    });
-    inputValores.forEach(valor => {
-        chartValores.push(valor.value);
-    });
-    inputCores.forEach(cor => {
-        chartCores.push(cor.value);
-    });
-
-    const data = {
-        labels: chartEtiquetas,
-        datasets: [
-            {
-                data: chartValores,
-                backgroundColor:  chartCores
-            }
-        ]
+    if (valorBruto.value > 0) {
+        sobra.innerHTML = `R$${(valorBruto.value - soma).toFixed(2)} | ${((valorBruto.value-soma)*100/valorBruto.value).toFixed(2)}%`;
     }
-    
+    else {
+        sobra.innerHTML = "Adicione um valor bruto";
+        sobra.style.color = "var(--cor-fonte-claro)"
+    }
+
     chart.destroy();
-
-    chart = new Chart("chart_dinheiro-porcentagem", {
+    chart = new Chart(chartCanvas, {
         type: "doughnut",
-        data: data,
+        data: {
+            labels: etiquetasLista,
+            datasets: [{
+                label: "Titulo do doughnut",
+                data: valoresLista,
+                backgroundColor: coresLista
+            }]
+        },
         options: {
             legend: {
                 display: false
@@ -113,52 +63,9 @@ function atualizaChart() {
             datasets: {
                 doughnut: {
                     borderWidth: 0,
-                    borderColor: "#ffffff",
                     hoverBorderWidth: 2
                 }
             }
         }
     });
-
-    chart.update();
-}
-
-function criarCampo() {
-    const novoCampo = document.createElement("fieldset");
-    novoCampo.className = "input_campo";
-    novoCampo.innerHTML = `
-        <label class="input_etiqueta" for="${inputAdicionarCampo.value}" data-etiquetas>${inputAdicionarCampo.value}</label>
-        <p class="porcentagem" data-porcentagem>0%</p>
-        <input class="campo_valores" id="${inputAdicionarCampo.value}" type="text" name="${inputAdicionarCampo.value}" data-valores>
-        <button class="deletar-campo" data-deletar-campo><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 12V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 12V17" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg></button>
-        <input class="input_cor" type="color" value="#ffffff" data-cores>
-    `
-    inputCampo.appendChild(novoCampo);
-
-    atualizaElementos();
-    botaoAdicionarCampo.style.display = "block";
-    inputNovoCampo.style.display = "none";
-}
-
-function deletarCampo(botao) {
-    console.log(botao)
-    const campo = botao.parentNode;
-    campo.remove();
-    atualizaChart();
-    atualizaElementos();
-}
-
-function atualizaSobra() {
-    sobra = inputBruto.value;
-    inputValores.forEach(gasto => {
-        sobra -= gasto.value;
-    });
-    sobraCampo.innerHTML = `R$${sobra.toFixed(2)} - ${(sobra * 100 / inputBruto.value).toFixed(1)}%`;
-
-    if (sobra < 0) {
-        sobraCampo.style.color = "var(--cor-negativo)";
-    } else {
-        sobraCampo.style.color = "var(--cor-positivo)";
-    }
-    atualizaChart();
 }
